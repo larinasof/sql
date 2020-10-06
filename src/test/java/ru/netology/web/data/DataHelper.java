@@ -23,37 +23,67 @@ public class DataHelper {
         }
     }
 
-    public static User getValidUser() throws SQLException {
+    public static User getValidUser() {
         String usersSQL = "select * from users where login = 'vasya';";
-        User user = runner.query(connection, usersSQL, new BeanHandler<>(User.class));
-        user.setPassword("qwerty123");
-        return user;
+        try {
+            User user = runner.query(connection, usersSQL, new BeanHandler<>(User.class));
+            user.setPassword("qwerty123");
+            return user;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
-    public static User getValidUser2() throws SQLException {
+    public static User getValidUser2() {
         String usersSQL = "select * from users where login = 'petya';";
-        User user = runner.query(connection, usersSQL, new BeanHandler<>(User.class));
-        user.setPassword("123qwerty");
-        return user;
+        try {
+            User user = runner.query(connection, usersSQL, new BeanHandler<>(User.class));
+            user.setPassword("123qwerty");
+            return user;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
-    public static User getInvalidPassword() throws SQLException {
+    public static User getInvalidPassword()  {
         User user = getValidUser();
         user.setPassword(faker.lorem().characters(9));
         return user;
     }
 
-    public static String getVerificationCode(User user) throws SQLException {
+    public static String getVerificationCode(User user) {
         String authCodeSQL = "select code from auth_codes " +
                 "where user_id = ? and created = (" +
                 "select max(created) from auth_codes " +
                 "where user_id = ?)";
-        String code = runner.query(connection, authCodeSQL, new ScalarHandler<>(), user.getId(), user.getId());
-        return code;
+        try { String code = runner.query(connection, authCodeSQL, new ScalarHandler<>(), user.getId(), user.getId());
+              return code;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
     public static String getInvalidVerificationCode() {
         return faker.number().digits(6);
+    }
+
+    public static void cleanTables() {
+        String deleteUsers = "DELETE FROM users";
+        String deleteCards = "DELETE FROM cards";
+        String deleteAuthCodes = "DELETE FROM auth_codes";
+        String deleteCardTransactions = "DELETE FROM card_transactions";
+        try {
+            runner.update(connection, deleteCardTransactions);
+            runner.update(connection, deleteAuthCodes);
+            runner.update(connection, deleteCards);
+            runner.update(connection, deleteUsers);
+            System.out.println("Tables are clean");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
 

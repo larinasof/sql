@@ -28,9 +28,9 @@ public class LoginPage {
     }
 
     public void blockedUser(User user) {
-        loginField.setValue(user.getLogin());
+        for (int i = 0; i < 3; i++) { loginField.setValue(user.getLogin());
         passwordField.setValue(user.getPassword());
-        loginButton.click();
+        loginButton.click(); }
         errorNotification.shouldBe(Condition.visible);
     }
 }
