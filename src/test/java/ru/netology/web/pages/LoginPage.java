@@ -2,6 +2,7 @@ package ru.netology.web.pages;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import org.openqa.selenium.Keys;
 import ru.netology.web.data.User;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -12,25 +13,25 @@ public class LoginPage {
     private SelenideElement loginButton = $("[data-test-id=action-login]");
     private SelenideElement errorNotification = $("[data-test-id='error-notification']");
 
-
-    public VerificationPage validLogin(User user) {
+    public void login(User user) {
         loginField.setValue(user.getLogin());
         passwordField.setValue(user.getPassword());
         loginButton.click();
+    }
+
+    public VerificationPage validLogin(User user) {
+        login(user);
         return new VerificationPage();
     }
 
-    public void invalidUser(User user) {
-        loginField.setValue(user.getLogin());
-        passwordField.setValue(user.getPassword());
-        loginButton.click();
-        errorNotification.shouldBe(Condition.visible);
+    public void invalidLogin(User user) {
+        loginField.doubleClick().sendKeys(Keys.BACK_SPACE);
+        passwordField.doubleClick().sendKeys(Keys.BACK_SPACE);
+        login(user);
+
     }
 
-    public void blockedUser(User user) {
-        for (int i = 0; i < 3; i++) { loginField.setValue(user.getLogin());
-        passwordField.setValue(user.getPassword());
-        loginButton.click(); }
+    public void blockedUser() {
         errorNotification.shouldBe(Condition.visible);
     }
 }

@@ -1,6 +1,6 @@
 package ru.netology.web.test;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.netology.web.data.DataHelper;
@@ -11,14 +11,14 @@ import ru.netology.web.pages.VerificationPage;
 import static com.codeborne.selenide.Selenide.open;
 
 class LoginTest {
-    @BeforeAll
-    static void CleanAllTables() {
-        DataHelper.cleanTables();
-    }
-
     @BeforeEach
     void setUp() {
         open("http://localhost:9999");
+    }
+
+    @AfterAll
+    static void cleanAllTables() {
+        DataHelper.cleanTables();
     }
 
     @Test
@@ -33,8 +33,9 @@ class LoginTest {
     @Test
     void shouldNotAuthorizeWithIncorrectPassword() {
         LoginPage loginPage = new LoginPage();
-        User invalidUser = DataHelper.getInvalidPassword();
-        loginPage.invalidUser(invalidUser);
+        User invalidLogin = DataHelper.getInvalidPassword();
+        loginPage.invalidLogin(invalidLogin);
+        loginPage.blockedUser();
     }
 
     @Test
@@ -50,7 +51,10 @@ class LoginTest {
     void shouldNotAuthorizeIfUserBlockedAfterThreeIncorrectPasswords() {
         LoginPage loginPage = new LoginPage();
         User blockedUser = DataHelper.getInvalidPassword();
-        loginPage.blockedUser(blockedUser);
+        loginPage.invalidLogin(blockedUser);
+        loginPage.invalidLogin(blockedUser);
+        loginPage.invalidLogin(blockedUser);
+        loginPage.blockedUser();
     }
 }
 

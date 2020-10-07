@@ -25,26 +25,26 @@ public class DataHelper {
 
     public static User getValidUser() {
         String usersSQL = "select * from users where login = 'vasya';";
+        User user = new User();
         try {
-            User user = runner.query(connection, usersSQL, new BeanHandler<>(User.class));
+            user = runner.query(connection, usersSQL, new BeanHandler<>(User.class));
             user.setPassword("qwerty123");
-            return user;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return user;
     }
 
     public static User getValidUser2() {
         String usersSQL = "select * from users where login = 'petya';";
+        User user = new User();
         try {
-            User user = runner.query(connection, usersSQL, new BeanHandler<>(User.class));
+            user = runner.query(connection, usersSQL, new BeanHandler<>(User.class));
             user.setPassword("123qwerty");
-            return user;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return user;
     }
 
     public static User getInvalidPassword()  {
